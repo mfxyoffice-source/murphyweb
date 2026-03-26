@@ -1,1 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MurphyWeb - 企业数字化解决方案 (SkyFort Style)</title>
+    <style>
+        /* 1. 全局变量与基础样式 (SkyFort 风格核心) */
+        :root {
+            --accent: #4D7BFF; /* 核心电光蓝 */
+            --accent-glow: rgba(77, 123, 255, 0.4);
+            --bg-dark: #050508; /* 深色背景 */
+            --glass-bg: rgba(255, 255, 255, 0.03); /* 毛玻璃背景 */
+            --glass-border: rgba(255, 255, 255, 0.08); /* 毛玻璃边框 */
+            --text-main: #FFFFFF; /* 主要文本颜色 */
+            --text-dim: #8E8E93; /* 次要文本颜色 */
+            --font-family-sans: 'Inter', -apple-system, system-ui, sans-serif;
+        }
 
+        /* 字体导入 - 可选，本地部署时可去除 */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-family-sans);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            /* 渐变背景模仿 SkyFort 视频 */
+            background: 
+                radial-gradient(circle at 80% 20%, rgba(77, 123, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(138, 43, 226, 0.05) 0%, transparent 40%),
+                var(--bg-dark);
+            background-attachment: fixed; /* 背景固定，滚动时内容浮动 */
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* 2. 通用容器与页面切换动画 */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.8s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 3. 导航栏 (固定顶部，毛玻璃效果) */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background-color: rgba(5, 5, 8, 0.7); /* 半透明背景，更强玻璃感 */
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 0;
+        }
+        nav .container { display: flex; justify-content: space-between; align-items: center; height: 70px; }
+        .logo { 
+            font-size: 24px; font-weight: 800; letter-spacing: -1px; 
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            color: var(--text-main);
+        }
+        .logo::before { 
+            content: ''; width: 14px; height: 14px; 
+            background: var(--accent); border-radius: 4px; 
+            box-shadow: 0 0 12px var(--accent-glow); 
+        }
+        
+        nav ul { display: flex; list-style: none; gap: 40px; }
+        nav a {
+            color: var(--text-dim); text-decoration: none; font-size: 15px; 
+            font-weight: 500; transition: 0.3s; cursor: pointer;
+            padding: 5px 0; /* 用于底部边框的 padding */
+            border-bottom: 2px solid transparent;
+        }
+        nav a:hover, nav a.active { color: var(--text-main); border-bottom-color: var(--accent); }
+
+        /* 4. 标题与副标题通用样式 */
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .tagline {
+            text-transform: uppercase; color: var(--accent); font-weight: 700;
+            font-size: 13px; letter-spacing: 3px; margin-bottom: 16px; display: block;
+        }
+        .main-title {
+            font-size: clamp(40px, 6vw, 68px); font-weight: 800; line-height: 1.1;
+            letter-spacing: -1.5px; margin-bottom: 20px;
+        }
+        .sub-description {
+            font-size: 18px; color: var(--text-dim); max-width: 800px; margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* 5. 按钮系统 (模仿 SkyFort 视频风格) */
+        .btn-group { display: flex; gap: 20px; justify-content: center; margin-top: 48px; }
+        .btn {
+            padding: 16px 36px; border-radius: 50px; font-weight: 600; cursor: pointer;
+            transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); border: none; font-size: 16px;
+            text-decoration: none; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .btn-primary { 
+            background: var(--accent); color: white;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 35px var(--accent); }
+        .btn-outline { 
+            background: transparent; border: 1.5px solid var(--glass-border); color: white;
+        }
+        .btn-outline:hover { background: var(--glass-border); transform: translateY(-3px); }
+
+        /* 6. Hero 区域 (首页) */
+        #page-home .hero {
+            padding: 200px 0 120px; text-align: center;
+            max-width: 1000px; margin: 0 auto;
+        }
+        #page-home .hero h1 {
+            font-size: clamp(56px, 9vw, 96px); /* 更大的主标题 */
+            font-weight: 900; letter-spacing: -2.5px;
+            line-height: 1.05;
+        }
+        #page-home .hero p { margin-bottom: 48px; }
+
+        /* 7. Feature 卡片 (模仿视频中的三列布局) */
+        .feature-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 28px; margin-top: 100px; padding-bottom: 100px;
+        }
+        .feature-card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 28px; padding: 40px; transition: 0.4s;
+            text-align: left; position: relative; overflow: hidden;
+        }
+        .feature-card::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(77, 123, 255, 0.05) 0%, transparent 70%);
+            opacity: 0; transform: scale(0.5); transition: opacity 0.5s, transform 0.5s;
+        }
+        .feature-card:hover { 
+            border-color: rgba(77, 123, 255, 0.5); transform: translateY(-12px); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .feature-card:hover::before { opacity: 1; transform: scale(1); }
+
+        .feature-card .icon { 
+            width: 56px; height: 56px; background: rgba(77, 123, 255, 0.1); 
+            border-radius: 16px; display: flex; align-items: center; 
+            justify-content: center; margin-bottom: 24px; color: var(--accent);
+            font-size: 28px;
+        }
+        .feature-card h3 { font-size: 24px; margin-bottom: 14px; font-weight: 700; }
+        .feature-card p { color: var(--text-dim); font-size: 16px; line-height: 1.7; }
+
+        /* 8. Services 页面 */
+        #page-services .hero { padding: 180px 0 100px; text-align: center; }
+        #page-services .main-title { margin-bottom: 40px; }
+        .service-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px; margin-top: 60px;
+        }
+        .service-card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 24px; padding: 35px; text-align: left;
+            transition: 0.3s ease;
+        }
+        .service-card:hover { transform: translateY(-8px); border-color: rgba(77, 123, 255, 0.4); }
+        .service-card h4 { font-size: 20px; margin-bottom: 12px; color: var(--accent); }
+        .service-card p { font-size: 15px; color: var(--text-dim); line-height: 1.6; }
+
+        /* 9. About 页面 */
+        #page-about .content-section {
+            padding: 180px 0 100px; text-align: left;
+            max-width: 900px; margin: 0 auto;
+        }
+        #page-about .content-section h2 {
+            font-size: clamp(36px, 5vw, 56px); font-weight: 800; line-height: 1.2;
+            margin-bottom: 30px; text-align: center;
+        }
+        #page-about .content-section p {
+            font-size: 18px; color: var(--text-dim); margin-bottom: 25px; line-height: 1.8;
+            padding: 0 20px;
+        }
+        #page-about .content-section ul {
+            list-style: none; padding: 0 20px; margin-top: 30px;
+        }
+        #page-about .content-section ul li {
+            position: relative; padding-left: 30px; margin-bottom: 15px;
+            font-size: 17px; color: var(--text-main);
+        }
+        #page-about .content-section ul li::before {
+            content: '✓'; position: absolute; left: 0; color: var(--accent); font-weight: bold;
+            font-size: 1.2em; top: -2px;
+        }
+
+        /* 10. Contact 页面 (模仿视频中的居中表单) */
+        #page-contact .contact-section {
+            padding: 180px 0 120px; text-align: center;
+        }
+        #page-contact .contact-card {
+            max-width: 550px; margin: 60px auto 0; background: var(--glass-bg);
+            padding: 50px; border-radius: 36px; border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        #page-contact .contact-card input,
+        #page-contact .contact-card textarea {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            padding: 18px 22px; border-radius: 14px; color: white; margin-bottom: 25px;
+            outline: none; font-size: 16px;
+        }
+        #page-contact .contact-card input:focus,
+        #page-contact .contact-card textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+        #page-contact .contact-card textarea { resize: vertical; min-height: 120px; }
+
+        /* 11. Footer */
+        footer {
+            padding: 60px 0 40px; border-top: 1px solid var(--glass-border);
+            margin-top: 100px; color: var(--text-dim); font-size: 14px; text-align: center;
+        }
+
+        /* 12. Toast 消息 */
+        #toast {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--accent); color: white; padding: 14px 30px; border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67); opacity: 0; z-index: 2000;
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* 响应式调整 */
+        @media (max-width: 992px) {
+            .nav-container { padding: 0 20px; }
+            nav ul { gap: 25px; }
+            .feature-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); padding: 0 20px;}
+            .main-title { font-size: clamp(36px, 8vw, 56px); }
+            .sub-description { font-size: 16px; }
+            .hero { padding: 150px 0 80px; }
+            #page-home .hero h1 { font-size: clamp(48px, 9vw, 80px); }
+            .btn-group { flex-direction: column; gap: 15px; }
+            .btn { width: 80%; max-width: 300px; margin: 0 auto; }
+            .contact-card { padding: 40px 30px; margin: 40px auto 0; }
+        }
+
+        @media (max-width: 768px) {
+            nav ul { display: none; } /* 移动端隐藏导航菜单 */
+            .logo { font-size: 20px; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .section-header { margin-bottom: 40px; }
+            .tagline { font-size: 12px; letter-spacing: 2px; }
+            .main-title { font-size: clamp(32px, 10vw, 48px); }
+            .sub-description { font-size: 15px; padding: 0 15px; }
+            .hero { padding: 120px 0 60px; }
+            #page-home .hero h1 { font-size: clamp(40px, 12vw, 60px); }
+            .feature-card { padding: 30px; border-radius: 20px; }
+            .feature-card .icon { width: 48px; height: 48px; font-size: 24px; }
+            .feature-card h3 { font-size: 20px; }
+            .feature-card p { font-size: 14px; }
+            #page-about .content-section p, #page-about .content-section ul li { font-size: 16px; }
+            #page-contact .contact-card { padding: 30px 20px; }
+            #page-contact .contact-card input, #page-contact .contact-card textarea { padding: 15px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container">
+            <div class="logo" onclick="switchPage('home')">MurphyWeb</div>
+            <ul>
+                <li><a onclick="switchPage('home')" class="nav-link active">首页</a></li>
+                <li><a onclick="switchPage('services')" class="nav-link">服务</a></li>
+                <li><a onclick="switchPage('about')" class="nav-link">关于</a></li>
+                <li><a onclick="switchPage('contact')" class="nav-link">联系</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section id="page-home" class="page active">
+            <div class="hero container">
+                <span class="tagline">💡 2026 数字化新篇章</span>
+                <h1>激发商业潜能<br>打造未来企业</h1>
+                <p class="sub-description">
+                    MurphyWeb 专注于为全球领先企业提供高性能、高安全性、AI 驱动的数字化基建与数据洞察解决方案，赋能业务创新与增长。
+                </p>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="switchPage('contact')">立即免费咨询</button>
+                    <button class="btn btn-outline" onclick="switchPage('services')">了解更多服务</button>
+                </div>
+            </div>
+
+            <div class="feature-grid container">
+                <div class="feature-card">
+                    <div class="icon">⚡</div>
+                    <h3>极速交付</h3>
+                    <p>采用先进的 DevOps 实践与敏捷开发流程，将您的项目从概念到上线周期缩短 40%，快速响应市场变化。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🛡️</div>
+                    <h3>金融级安全</h3>
+                    <p>内置零信任安全架构，多层加密与实时监控，全方位守护您的企业核心数据资产，确保业务永续。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🤖</div>
+                    <h3>AI 原生</h3>
+                    <p>深度集成最新大型语言模型 (LLM) 和机器学习能力，为您的业务流程注入自动化、智能化的生产力。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-services" class="page">
+            <div class="hero container">
+                <div class="section-header">
+                    <span class="tagline">💎 全面服务</span>
+                    <h2 class="main-title">MurphyWeb 核心解决方案</h2>
+                    <p class="sub-description">
+                        我们提供端到端的数字化转型服务，涵盖从基础设施到应用层的每一个环节，助力企业构建面向未来的竞争力。
+                    </p>
+                </div>
+                <div class="service-grid">
+                    <div class="service-card">
+                        <h4>云架构规划与实施</h4>
+                        <p>基于 AWS, Azure, 阿里云等主流平台，提供弹性、高效、成本优化的云原生架构设计与迁移服务。</p>
+                    </div>
+                    <div class="service-card">
+                        <h4>大数据与 BI 决策</h4>
+                        <p>构建实时数据湖、数据仓库，通过 BI 仪表板提供深度数据洞察，支持企业智能化决策。</p>
+                    </div>
+                    <div class="service-card">
+                        <h4>定制化企业应用</h4>
+                        <p>从需求分析到上线维护，提供高效、稳定、用户友好的 Web/App 定制开发服务。</p>
+                    </div>
+                    <div class="service-card">
+                        <h4>DevOps 咨询与自动化</h4>
+                        <p>优化 CI/CD 流程，实现自动化测试与部署，提升开发效率与系统稳定性。</p>
+                    </div>
+                    <div class="service-card">
+                        <h4>网络安全与合规</h4>
+                        <p>提供渗透测试、漏洞管理、合规审计等服务，确保您的系统满足行业最高安全标准。</p>
+                    </div>
+                    <div class="service-card">
+                        <h4>AI/ML 解决方案</h4>
+                        <p>将机器学习模型集成到业务流程中，实现智能推荐、预测分析、自动化客服等创新功能。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-about" class="page">
+            <div class="content-section">
+                <div class="section-header" style="text-align: center;">
+                    <span class="tagline">🌐 我们的故事</span>
+                    <h2 class="main-title">关于 MurphyWeb</h2>
+                </div>
+                <p>
+                    MurphyWeb 成立于 2020 年，由一群对技术和创新充满热情的专家创立。我们的使命是通过领先的数字化技术，帮助企业克服挑战，把握机遇，实现可持续增长。
+                </p>
+                <p>
+                    凭借多年的行业经验和对前沿技术的深刻理解，我们已成功为来自金融、零售、制造、医疗等多个行业的 500 多家客户提供了卓越的服务。我们不仅仅是技术提供者，更是您值得信赖的长期合作伙伴。
+                </p>
+                <h2>我们的核心优势</h2>
+                <ul>
+                    <li>深厚的技术积累：涵盖云原生、大数据、AI/ML、DevOps 等多个领域。</li>
+                    <li>客户至上：以客户需求为导向，提供定制化、高价值的解决方案。</li>
+                    <li>持续创新：紧跟技术发展趋势，不断探索新的解决方案。</li>
+                    <li>经验丰富的团队：由行业资深架构师、工程师、项目经理组成。</li>
+                </ul>
+                <p style="margin-top: 40px;">
+                    展望未来，MurphyWeb 将继续秉承“创新、卓越、共赢”的理念，与全球企业携手并进，共同开启智能数字化新时代。
+                </p>
+            </div>
+        </section>
+
+        <section id="page-contact" class="page">
+            <div class="contact-section">
+                <div class="section-header">
+                    <span class="tagline">📞 联系我们</span>
+                    <h2 class="main-title">开启您的数字化转型之旅</h2>
+                    <p class="sub-description">
+                        我们期待与您探讨业务需求，定制专属解决方案。立即填写表单，我们将在 24 小时内与您取得联系。
+                    </p>
+                </div>
+                <div class="contact-card">
+                    <form onsubmit="handleSubmit(event)">
+                        <input type="text" id="contactName" placeholder="您的姓名" required>
+                        <input type="email" id="contactEmail" placeholder="您的工作邮箱" required>
+                        <textarea id="contactMessage" placeholder="请简述您的项目需求或疑问..." rows="6"></textarea>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;">发送咨询</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 MurphyWeb. All rights reserved.</p>
+            <p>基于 SkyFort 风格设计。</p>
+        </div>
+    </footer>
+
+    <div id="toast">✅ 消息已成功发送！我们将尽快联系您。</div>
+
+    <script>
+        // 页面切换逻辑
+        function switchPage(pageName) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // 显示目标页面
+            document.getElementById(`page-${pageName}`).classList.add('active');
+            
+            // 导航链接高亮同步
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                // 通过 onclick 属性匹配 pageName
+                if (link.getAttribute('onclick').includes(`'${pageName}'`)) {
+                    link.classList.add('active');
+                }
+            });
+            // 平滑滚动到页面顶部
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // 表单提交处理
+        function handleSubmit(e) {
+            e.preventDefault(); // 阻止表单默认提交行为
+            const name = document.getElementById('contactName').value;
+            showToast(`感谢 ${name}！您的咨询已发送成功。`);
+            document.getElementById('contactName').value = ''; // 清空输入
+            document.getElementById('contactEmail').value = '';
+            document.getElementById('contactMessage').value = '';
+        }
+
+        // Toast 消息显示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500); // 3.5秒后自动隐藏
+        }
+
+        // 初始化：确保在页面加载后，'首页' 被选中
+        document.addEventListener('DOMContentLoaded', () => {
+            switchPage('home');
+        });
+    </script>
+</body>
+</html>
